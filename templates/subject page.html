@@ -1,0 +1,66 @@
+{% extends "base template.html" %}
+{% block style %}
+<style>
+  .box {
+    height: 120px;
+    width: 200px;
+    font-size: 200px;
+    margin: 7.5px;
+    background-color: white;
+    display: inline-block;
+    vertical-align: top;
+  }
+  .boxtext {
+    font-size: 0.1em;
+    text-align: center;
+    height:2.8em;
+  }
+  #sendSubjectButton {
+    position: absolute;
+    margin-left: 70px;
+    display: none;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<h1>Flashcards:</h1>
+{% for topic in userdata %}
+  <a href="javascript: submitSubjectForm('{{ topic[0] }}')">
+    <div id="{{ topic[0] }}" class="box">
+      <p class="boxtext">{{ topic[0] }}</p>
+    </div>
+  </a>
+{% endfor %}
+<div class="box">
+  <p class="boxtext" contenteditable="true" id="newSubject">create subject</p>
+  <!-- need to add a character limit to subjects and fix object relativity for when you have more than one line -->
+  <input type="button" value="create" id="sendSubjectButton"></input>
+</div>
+
+<form id="subjectform" method="POST"><!-- This needs renaming -->
+  <input type="hidden"  name="data" value="flashcard"></input>
+  <input type="hidden" id="TopicName" name="topic" value=""></input>
+</form>
+<form id="createflashcardform" method="POST">
+  <input type="hidden" name="data" value="newTopic"></input>
+  <input type="hidden" id= "newTopicName" name="newTopicName" value=""></input>
+</form>
+<script>
+  function submitSubjectForm(flashCardName) {
+    $('#TopicName').val(flashCardName);
+    document.forms["subjectform"].submit();
+  };
+  $('#newSubject').on('input' , function() {
+    $('#sendSubjectButton').show();
+    //could add in "enter" key function to submit form
+  });
+  $('#sendSubjectButton').on('click' , function() {
+    $('#newTopicName').val($('#newSubject').text());
+    document.forms['createflashcardform'].submit();
+  })
+</script>
+{% endblock %}

@@ -1,0 +1,182 @@
+{% extends "base template.html" %}
+{% block style %}
+<style>
+  .box {
+    height: 120px;
+    width: 200px;
+    font-size: 90px;
+    margin: 7.5px;
+    background-color: white;
+    display: inline-block;
+  }
+  .boxtext {
+    font-size: 0.3em;
+    text-align: center;
+  }
+  #topicName {
+    text-align: center;
+  }
+  .orderButton {
+    height: 100%;
+    width: 14%;
+    background-color: grey;
+    display: inline-block;
+    margin: 0;
+  }
+  #flashcardInformation {
+    height: 100%;
+    width: 70%;
+    background-color: blue;
+    display: inline-block;
+    margin:0;
+    position: relative;
+  }
+  #flashcardText {
+    text-align: center;
+    margin: 0;
+    position: absolute;
+    }
+  #container {
+    height: 60%;
+    width: 70%;
+    padding-left: 15%;
+    padding-right: 15%;
+    margin: 0;
+  }
+  #flashcardNumber {
+    margin: 0;
+    display: inline-block;
+    text-align: center;
+    height: 100%;
+    width: 40%;
+    font-size: 2em
+
+  }
+  input {
+    display: inline-block;
+  }
+  .flashcardbutton {
+    width: 25%;
+    height: 100%;
+    margin: 0;
+  }
+  #buttoncontainer {
+    margin-left: 40%;
+    margin-right: 40%;
+    width: 20%
+    height: 7.5%;
+
+  }
+</style>
+{% endblock %}
+{% block content %}
+<h1 id="topicName">{{ topic }}<!-- put in topic name here and center it--></h1>
+<div id="container">
+  <a href= "javascript: changeCard(-1)">
+    <div id="lastButton" class="orderButton"></div>
+  </a>
+  <div id="flashcardInformation"><p id="flashcardText" contenteditable="false">this is text</p></div>
+  <a href= "javascript: changeCard(1)">
+    <div id="nextButton" class="orderButton"></div>
+  </a>
+</div>
+<div id="buttoncontainer">
+  <input type="button" value="edit" class="flashcardbutton" id="editFlashcard"></input>
+  <input type="text" id="flashcardNumber" value="1"></input>
+  <input type="button" value="save" class="flashcardbutton" id="saveFlashcard"></input>
+  <input type="button" id="canceledit" value="cancel"></input>
+</div>
+
+<form id="save" method="POST">
+  <input type="hidden" name="data" value="SaveEdit"></input>
+  <input type="hidden" name="flashcardnumbersave" id="flashcardnumbersave"value=""></input>
+  <input type="hidden" name="flashcardtextsave" id="flashcardtextsave"value=""></input>
+</form>
+<script>
+  var theflashcards = [];
+  {% for information in flashcardslist %}
+  theflashcards.push( '{{ information[1] }}' );
+    // there isn't something that allows you to organise the cards by number
+  {% endfor %}
+
+  $('#saveFlashcard').hide();
+  $('#canceledit').hide();
+
+  $('#canceledit').click( function() {
+    $('#editFlashcard').show();
+    $('.orderButton').show();
+    $('#flashcardNumber').show();
+    $('#saveFlashcard').hide();
+    $('#canceledit').hide();
+    $('#flashcardText').attr('contenteditable','false');
+  })
+
+  $('#editFlashcard').click( function () {
+    $('#editFlashcard').hide();
+    $('.orderButton').hide();
+    $('#flashcardNumber').hide();
+    $('#saveFlashcard').show();
+    $('#canceledit').show();
+    $('#flashcardText').attr('contenteditable','true');
+    //need to send this over using form submit then code the server sides
+  });
+
+  $('#saveFlashcard').click( function () {
+    $('#flashcardnumbersave').attr('value' , currentFlashCardNumber);
+    $('#flashcardtextsave').attr('value' , $('#flashcardText').text());
+    document.forms['save'].submit();
+  });
+
+  theflashcards.push( "---CREATE A NEW FLASHCARD---")
+
+  $('#flashcardText').text(theflashcards[0]);
+
+  var currentFlashCardNumber = 1;
+
+  function changeCard(movement) {
+    error = 1;
+    console.log(currentFlashCardNumber)
+    if ((currentFlashCardNumber + movement) > 0) {
+      if ((currentFlashCardNumber + movement) <= theflashcards.length) {
+        currentFlashCardNumber = currentFlashCardNumber + movement;
+        $('#flashcardText').text(theflashcards[currentFlashCardNumber - 1]);
+        $('#flashcardNumber').val(currentFlashCardNumber);
+        error = 0;
+      }
+    }
+    if (error === 1) {
+      error = 0;
+    }
+
+  }
+
+  $('body').keyup( function(e) {
+        if (e.keyCode == 13) {
+            var error = 1;
+             // prevent the button click from happening
+            if(parseInt($('#flashcardNumber').val()) != "NaN"){
+              if(parseInt($('#flashcardNumber').val()) <= theflashcards.length) {
+                if(parseInt($('#flashcardNumber').val()) > 0) {
+                  $('#flashcardText').text(theflashcards[parseInt($('#flashcardNumber').val()) - 1]);
+                  currentFlashCardNumber = parseInt($('#flashcardNumber').val());
+                  error = 0;
+                }
+
+              }
+
+            }
+            if (error == 1) {
+              $('#flashcardNumber').val(currentFlashCardNumber);
+              error = 0;
+            }
+            // i need to add code to disable changing flashcards when editing a card and make the cancel button return it back to normal
+            //insert code here that goes through the flashcards recieved
+        }
+  });
+</script>
+
+{% endblock %}
+
+
+<!-- need to make a back button for returning to the subject screen which also needs doing for the subject screen and
+possibly a way of rearranging the flash cards on a seperate page -->

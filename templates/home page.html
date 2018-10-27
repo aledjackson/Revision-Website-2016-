@@ -1,0 +1,38 @@
+{% extends "base template.html" %}
+{% block style %}
+  <style>
+    .box {
+      height: 120px;
+      width: 200px;
+      font-size: 90px;
+      margin: 7.5px;
+      background-color: white;
+      display: inline-block;
+    }
+    .boxtext {
+      font-size: 0.3em;
+      text-align: center;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+  <h1> FlashCards: </h1>
+  <br />
+    {% for subject in flashCards %}
+      <a href="javascript: submitSubjectForm('{{ subject[0] }}')">
+        <div id="{{ subject[0] }}" class="box">
+          <p class="boxtext">{{ subject[0] }}</p>
+        </div>
+      </a>
+    {% endfor %}
+  <form id="subjectform" method="POST">
+    <input type="hidden"  name="data" value="subject"></input>
+    <input type="hidden" id="subjectToSendName" name="subject" value=""></input>
+  </form>
+  <script>
+    function submitSubjectForm(subjectName) {
+      $('#subjectToSendName').val(subjectName);
+      document.forms["subjectform"].submit();
+    };
+  </script>
+{% endblock %}

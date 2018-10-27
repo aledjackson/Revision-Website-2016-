@@ -1,0 +1,36 @@
+{% extends "base template.html" %}
+{% block style %}
+<style>
+.textbox {
+  /** add some javascript to make the textboxes center to screen but don't get smaller
+  than a certain size **/
+  height: 30px;
+  width: 20%;
+  margin-left: 40%;
+  margin-right: 40%;
+  margin-top: 15px;
+}
+#signin {
+  margin-left: 40%;
+  margin-right: 40%;
+}
+#login {
+  margin-left: 40%;
+  margin-right:40%;
+  width: 20%;
+  height: 40px;
+  margin-top: 20px;
+}
+</style>
+{% endblock %}
+{% block content %}
+<h1 id="signin"> Sign In </h1>
+<form method="POST">
+  <input type="text" placeholder="Username" class="textbox" name="username" />
+  <br />
+  <input type="text" placeholder="Password" class="textbox" name="password" />
+  <br />
+  <input type="submit" value="login" name="submit" id="login"/>
+</form>
+
+{% endblock %}
